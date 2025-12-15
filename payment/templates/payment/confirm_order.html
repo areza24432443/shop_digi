@@ -1,0 +1,97 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %} 
+{% load humanize %}
+
+
+<!-- Header-->
+    <header class="bg-dark py-5">
+      <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+          <h1 class="display-4 fw-bolder">تایید نهایی</h1>
+          <p class="lead fw-normal text-white-50 mb-0">
+            
+          </p>
+        </div>
+      </div>
+    </header>
+    <br><br><br><br><br><br>
+    <div class="container ">
+
+        <div class="row">
+           
+            <center class="col-10">
+             <div class="card">
+  <div class="card-header">
+    خلاصه سفارش شما
+  </div>
+  <div class="card-body">
+   {% for product in cart_products %}
+    <p class="card-text">
+      {{product.name}}<br>
+
+       {% if product.is_sale %}
+          
+          <strong> 💰قیمت :<strike>{{product.price | intcomma}} تومان </strike>-{{product.sale_price | intcomma}} تومان </strong>
+        {% else %}
+           💰قیمت :{{product.price | intcomma}} تومان 
+        {% endif %}
+      <small>
+      تعداد: 
+      {% for key, value in quantities.items %}
+
+         {% if key == product.id|slugify %}
+
+        
+          {{value}}
+          {% endif %}
+          
+
+         {% endfor %}
+      </small><br>
+       
+    <hr>
+    
+   {% endfor %} 
+   <strong>مجموع سفارش شما: {{total | intcomma}} تومان </strong><br>
+   <br>
+   
+    
+  </div>
+</div>
+<br><br>
+  <div class="card">
+  <div class="card-header">
+   مشخصات ارسال
+  </div>
+  <div class="card-body">
+    <form method="post" action="{% url 'process_order' %}">
+    {% csrf_token %}
+       نام کامل: {{ shipping_info.shipping_full_name }} <br><br>
+      
+         آدرس: {{ shipping_info.shipping_address1 }} <br><br>
+        کد پستی: {{ shipping_info.shipping_zipcode }}  <br><br>
+        شهر: {{ shipping_info.shipping_city }}  <br><br>
+       
+        کشور: {{ shipping_info.shipping_country }} <br><br>
+        ایمیل: {{ shipping_info.shipping_email }}
+
+         
+         <br><br>
+  </div>
+</div>
+<br><br>
+    <button type="submit" class="btn btn-primary">تایید و ادامه به پرداخت</button>
+</form>
+            </center>
+       
+      </div>
+     </div>
+      <br><br>
+
+
+  
+{% endblock %}
+   
+   

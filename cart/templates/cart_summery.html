@@ -1,0 +1,162 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %} 
+{% load humanize %}
+
+
+<!-- Header-->
+    <header class="bg-dark py-5">
+      <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+          <h1 class="display-4 fw-bolder">سبدخریدشما</h1>
+          <p class="lead fw-normal text-white-50 mb-0">
+         اینجا هرچی بخوای بخری اضافه میشه
+          </p>
+        </div>
+      </div>
+    </header>
+    <br><br><br><br><br><br>
+   
+   {% if cart_products %}
+    {% for product in cart_products %}
+    <div class="container ">
+
+        <div class="card mb-3" >
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{product.image.url}}" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{product.name}}</h5>
+        <p class="card-text">{{product.description}}</p>
+        <p class="card-text">
+        {% if product.is_sale %}
+          
+          <strong> 💰قیمت :<strike>{{product.price | intcomma}} تومان </strike>-{{product.sale_price | intcomma}} تومان </strong>
+        {% else %}
+           💰قیمت :{{product.price | intcomma}} تومان 
+        {% endif %}
+
+        <select class="form-select" id="select{{product.id}}">
+
+           <p class="cart-text"> تعداد:
+         
+          {% for key, value in quantities.items %}
+
+         {% if key == product.id|slugify %}
+
+        
+          <option  selected>{{value}}</option>
+          {% endif %}
+
+         {% endfor %}
+         </p> 
+
+   
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+</select>
+
+         
+        <br>
+        {% comment %} <button type="button" id="update" class="btn btn-primary"  data-index = '{{product.id}}'>ویرایش</button> {% endcomment %}
+        <button type="button" class="btn btn-primary update-cart" data-index = '{{product.id}}'>ویرایش</button>
+        <button type="button" class="btn btn-danger delete-cart" data-index = '{{product.id}}'>حذف</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">بازگشت به صفحه اصلی</a>
+      </div>
+    </div>
+  </div>
+</div>
+      </div>
+        <br><br>
+        
+      {% endfor %}  
+    <h3 class="container">مجموع سبد خرید شما: {{total | intcomma}} تومان </h3>
+    <br>
+  <center>  <a href="{% url 'checkout' %}" class="btn btn-success">صورتحساب</a></center>
+    <br><br><br>
+    {% else %}
+
+    
+    <center><h1 class="container">سبد خرید شما خالی است &#128531;</h1></center>
+    {% endif %}
+
+    <script >
+       
+                        
+         $(document).on('click', '.update-cart', function(e){
+
+             
+           e.preventDefault();
+          
+           var productid = $(this).data('index');
+          
+                $.ajax({
+                   type:'POST',
+                    url:'{% url 'cart_update' %}',
+                   
+                    data:{
+                        product_id: $(this).data("index"),
+                        product_qty: $('#select'+productid+' option:selected').text(),
+                       
+                        csrfmiddlewaretoken:'{{csrf_token}}',
+                        action:'post'
+                    },
+                   
+                    success:function(json){
+                     
+                      
+                      location.reload();
+                       
+                     
+                       // alert("محصول با موفقیت به سبد خرید اضافه شد");
+                    },
+                    error:function(xhr,errmsg,err){
+                       // alert("خطا در افزودن محصول به سبد خرید");
+                    }
+                });
+           
+           }); 
+
+           
+          $(document).on('click', '.delete-cart', function(e){
+
+             
+           e.preventDefault();
+          
+           
+          
+                $.ajax({
+                   type:'POST',
+                    url:'{% url 'cart_delete' %}',
+                   
+                    data:{
+                        product_id: $(this).data("index"),
+                       
+                        csrfmiddlewaretoken:'{{csrf_token}}',
+                        action:'post'
+                    },
+                   
+                    success:function(json){
+                     
+                      
+                      location.reload();
+                       
+                     
+                       // alert("محصول با موفقیت به سبد خرید اضافه شد");
+                    },
+                    error:function(xhr,errmsg,err){
+                       // alert("خطا در افزودن محصول به سبد خرید");
+                    }
+                });
+           
+           });    
+        
+    </script>
+{% endblock %}
+   
+   

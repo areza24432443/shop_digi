@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %} 
+{% load humanize %}
+{% block content %}
+
+<!-- Header-->
+   
+     <br><br>
+    <div class="container ">
+
+        <div class="card mb-3" >
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{product.image.url}}" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8 justify-content-center" >
+      <div class="card-body">
+        <h5 class="card-title">{{product.name}}</h5>
+        <p class="card-text">{{product.description}}</p>
+        <p class="card-text">
+        {% if product.is_sale %}
+          
+          <strong> 💰قیمت :<strike>{{product.price | intcomma}} تومان </strike>-{{product.sale_price | intcomma}} تومان </strong>
+        {% else %}
+           💰قیمت :{{product.price | intcomma}} تومان 
+        {% endif %}
+       
+        <br><br>
+       
+        تعداد:
+        <select class="form-select" id="cart-qty">
+ 
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+</select>
+        <br><br>
+        <button type="button" class="btn btn-primary" id='cart-add' value='{{product.id}}'>افزودن کردن به سبد خرید</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">بازگشت به صفحه اصلی</a>
+      </div>
+    </div>
+  </div>
+</div>
+     </div>
+      <br><br><br><br><br><br><br><br>
+
+      <script >
+      
+         
+              
+         
+        
+         $(document).on('click', '#cart-add', function(e){
+           e.preventDefault();
+
+           
+                $.ajax({
+                   type:'POST',
+                    url:'{% url 'cart_add' %}',
+                   
+                    data:{
+                        product_id: $('#cart-add').val(),
+                        product_qty: $('#cart-qty option:selected').text(),
+                        csrfmiddlewaretoken:'{{csrf_token}}',
+                        action:'post'
+                    },
+                    success:function(json){
+                       
+                      document.getElementById("cart_quantity").textContent = json.qty
+                      location.reload();
+                      
+                       
+                     
+                       // alert("محصول با موفقیت به سبد خرید اضافه شد");
+                    },
+                    error:function(xhr,errmsg,err){
+                       // alert("خطا در افزودن محصول به سبد خرید");
+                    },
+                });
+           
+           }); 
+        
+    </script>
+{% endblock %}

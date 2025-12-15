@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Header-->
+    <br>
+    <div class="container ">
+
+        <div class="row">
+           
+            <div class="col-8">
+
+              {% if other %}
+                <h2>سفارشات شما</h2>
+                
+
+      <table class="table">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">شماره سفارش</th>
+      <th scope="col"> نام</th>
+      <th scope="col">تاریخ ثبت سفارش</th>
+      <th scope="col">وضعیت</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in other %}
+    <tr>
+      <th scope="row">{{ order.id }}</th>
+      <td>{{ order.full_name }}</td>
+      <td>{{ order.date_ordered }}</td>
+      <td>{{ order.get_status_display }}</td>
+    </tr>
+    {% endfor %}
+    </tr>
+    <tr>
+
+      
+  </tbody>
+</table>
+              {% else %}
+                <h2>شما هیچ سفارشی ثبت نکرده اید.</h2>
+              {% endif %}
+              <br>
+              <hr>
+
+              {% if delivered  %}
+                <h2>سفارشات تحویل داده شده</h2>
+                <hr>
+      <table class="table">
+  <thead class="table-success">
+    <tr>
+      <th scope="col">شماره سفارش</th>
+      <th scope="col"> نام</th>
+      <th scope="col">تاریخ  تحویل</th>
+      <th scope="col">وضعیت</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in delivered %}
+    <tr>
+      <th scope="row">{{ order.id }}</th>
+      <td>{{ order.full_name }}</td>
+      <td>{{ order.last_updated }}</td>
+      <td>{{ order.get_status_display }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+              {% endif %}
+
+            </div>
+       
+      </div>
+     </div>
+      <br><br>
+{% endblock %}

@@ -1,0 +1,88 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %} 
+{% load humanize %}
+
+
+<!-- Header-->
+    <header class="bg-dark py-5">
+      <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+          <h1 class="display-4 fw-bolder">صورتحساب</h1>
+          <p class="lead fw-normal text-white-50 mb-0">
+            لطفا اطلاعات پرداخت خود را وارد کنید
+          </p>
+        </div>
+      </div>
+    </header>
+    <br><br><br><br><br><br>
+    <div class="container ">
+
+        <div class="row">
+           
+            <center class="col-10">
+             <div class="card">
+  <div class="card-header">
+    خلاصه سفارش شما
+  </div>
+  <div class="card-body">
+   {% for product in cart_products %}
+    <p class="card-text">
+      {{product.name}}<br>
+
+       {% if product.is_sale %}
+          
+          <strong> 💰قیمت :<strike>{{product.price | intcomma}} تومان </strike>-{{product.sale_price | intcomma}} تومان </strong>
+        {% else %}
+           💰قیمت :{{product.price | intcomma}} تومان 
+        {% endif %}
+      <small>
+      تعداد: 
+      {% for key, value in quantities.items %}
+
+         {% if key == product.id|slugify %}
+
+        
+          {{value}}
+          {% endif %}
+          
+
+         {% endfor %}
+      </small><br>
+       
+    <hr>
+    
+   {% endfor %} 
+   <strong>مجموع سفارش شما: {{total | intcomma}} تومان </strong><br>
+   <br>
+   
+    <a href="{% url 'cart_summery' %}" class="btn btn-sm btn-outline-secondary">ویرایش سفارش</a>
+  </div>
+</div>
+<br><br>
+  <div class="card">
+  <div class="card-header">
+   مشخصات ارسال
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{% url 'confirm_order' %}">
+    {% csrf_token %}
+        {{ shipping_form.as_p }}
+         <br><br>
+  </div>
+</div>
+<br><br>
+<button type="submit" class="btn btn-primary">ادامه</button>
+</form>
+            </center>
+       
+      </div>
+     </div>
+      <br><br>
+
+
+  
+{% endblock %}
+   
+   
